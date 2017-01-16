@@ -3,8 +3,13 @@
 import web
 
 urls = (
-    '/c/(.*)', 'cat'
+    '/', 'index',
+    '/c/(.*)', 'cat',
 )
+
+class index:
+    def GET(self):
+        return "Usage: WIP"
 
 class cat:
     def GET(self, name):
