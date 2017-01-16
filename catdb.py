@@ -3,7 +3,7 @@
 import sqlite3
 import os.path
 
-db_name = 'cat.sql'
+db_name = 'cat.sqlite'
 
 def init_db():
     if not os.path.isfile(db_name):
@@ -15,7 +15,7 @@ def init_db():
             con = sqlite3.connect(db_name)
 
             cur = con.cursor()
-            cur.execute("CREATE TABLE Catalog(CatNo TEXT, MH_SHA256 NONE)")
+            cur.execute("CREATE TABLE Catalog(CatNo TEXT, MultiHash NONE)")
 
             con.commit()
 
