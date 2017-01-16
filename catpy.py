@@ -3,12 +3,12 @@
 import web
 
 urls = (
-    '/', 'index'
+    '/c/(.*)', 'cat'
 )
 
-class index:
-    def GET(self):
-        return "Hello, world!"
+class cat:
+    def GET(self, name):
+        return "Hello, "+name+"!"
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
