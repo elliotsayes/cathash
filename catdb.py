@@ -27,3 +27,9 @@ def cat2hash(catno):
 
         mh = cur.fetchone()
         return mh
+
+def add_entry(cat,mh):
+    con = sqlite3.connect(db_name)
+    with con:
+        cur = con.cursor()
+        cur.execute('INSERT INTO Catalog VALUES(?,?)',(cat,mh))
