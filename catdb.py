@@ -12,7 +12,7 @@ def init_db():
         con = sqlite3.connect(db_name)
         with con:
             cur = con.cursor()
-            cur.execute("CREATE TABLE Catalog(CatNo TEXT, MultiHash NONE)")
+            cur.execute('CREATE TABLE Catalog(CatNo TEXT, MultiHash NONE)')
             con.commit()
 
         return True
@@ -28,8 +28,8 @@ def cat2hash(catno):
         mh = cur.fetchone()
         return mh
 
-def add_entry(cat,mh):
+def add_entry(catno,mh):
     con = sqlite3.connect(db_name)
     with con:
         cur = con.cursor()
-        cur.execute('INSERT INTO Catalog VALUES(?,?)',(cat,mh))
+        cur.execute('INSERT INTO Catalog VALUES(?,?)',(catno,mh))

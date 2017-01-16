@@ -2,7 +2,7 @@
 
 import web
 import catdb
-#import base58
+import base58
 
 #web.config.debug = False
 
@@ -20,10 +20,10 @@ class cat:
         catdb.init_db()
 
         mh = catdb.cat2hash(name)
-        #TODO: convert to base58 ?
 
         if mh:
-            return mh[0]
+            mh58 = base58.b58encode(mh[0])
+            return mh58
         else:
             return bytes()
 
