@@ -7,42 +7,23 @@ db_name = 'cat.sqlite'
 
 def init_db():
     if not os.path.isfile(db_name):
-
         print('Creating db: '+db_name)
 
-        con = None
-        try:
-            con = sqlite3.connect(db_name)
-
+        con = sqlite3.connect(db_name)
+        with con:
             cur = con.cursor()
             cur.execute("CREATE TABLE Catalog(CatNo TEXT, MultiHash NONE)")
-
             con.commit()
 
-        except (lite.Error, e):
-            print ("Error %s:" % e.args[0])
-            sys.exit(1)
+        return True
 
-        finally:
-            if con:
-                con.close()
+    return False
 
-def cat2hash():
-    con = None
-    try:
-        con = sqlite3.connect(db_name)
-
+def cat2hash(catno):
+    con = sqlite3.connect(db_name)
+    with con:
         cur = con.cursor()
-        cur.execute('SELECT SQLITE_VERSION()')
+        cur.execute('SELECT MultiHash FROM Catalog WHERE CatNo=?', (catno,))
 
-        data = cur.fetchone()
-
-        print("SQLite version: %s" % data)
-
-    except (lite.Error, e):
-        print ("Error %s:" % e.args[0])
-        sys.exit(1)
-
-    finally:
-        if con:
-            con.close()
+        mh = cur.fetchone()
+        return mh

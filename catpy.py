@@ -2,6 +2,9 @@
 
 import web
 import catdb
+#import base58
+
+#web.config.debug = False
 
 urls = (
     '/', 'index',
@@ -15,7 +18,14 @@ class index:
 class cat:
     def GET(self, name):
         catdb.init_db()
-        return "Hello, "+name+"!"
+
+        mh = catdb.cat2hash(name)
+        #TODO: convert to base58 ?
+
+        if mh:
+            return mh[0]
+        else:
+            return bytes()
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
