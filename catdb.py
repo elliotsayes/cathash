@@ -12,24 +12,28 @@ def init_db():
         con = sqlite3.connect(db_name)
         with con:
             cur = con.cursor()
-            cur.execute('CREATE TABLE Catalog(CatNo TEXT, MultiHash NONE)')
+            cur.execute('CREATE TABLE Library(MultiHash BLOB UNIQUE, DiscogsRelease INTEGER UNIQUE, CatalogNumber TEXT, FormatEnum INTEGER)')
             con.commit()
 
         return True
 
     return False
 
-def cat2hash(catno):
+def get_hash(search_term, is_discogs=True):
     con = sqlite3.connect(db_name)
     with con:
         cur = con.cursor()
-        cur.execute('SELECT MultiHash FROM Catalog WHERE CatNo=?', (catno,))
+        
+        if is_discogs:
+            cur.execute('SELECT MultiHash FROM Library WHERE DiscogsRelease=?', (search_term,))
+        else:
+            cur.execute('SELECT MultiHash FROM Library WHERE CatalogNumber=?', (search_term,))
 
         mh = cur.fetchone()
         return mh
 
-def add_entry(catno,mh):
+def add_entry(mh,discogs,catno,format):
     con = sqlite3.connect(db_name)
     with con:
         cur = con.cursor()
-        cur.execute('INSERT INTO Catalog VALUES(?,?)',(catno,mh))
+        cur.execute('INSERT INTO Library VALUES(?,?,?,?)',(mh,discogs,catno,format))

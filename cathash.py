@@ -17,9 +17,7 @@ class index:
 
 class cat:
     def GET(self, name):
-        catdb.init_db()
-
-        mh = catdb.cat2hash(name)
+        mh = catdb.get_hash(name,False)
 
         if mh:
             mh58 = base58.b58encode(mh[0])
@@ -28,5 +26,7 @@ class cat:
             return bytes()
 
 if __name__ == "__main__":
+    catdb.init_db()
+
     app = web.application(urls, globals())
     app.run()
