@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
-import re
 import web
+import json as _json
 
-import catdb
 import base58
 import defs
+import catdb
 
 #web.config.debug = False
 
 urls = (
     '/', 'index',
-    '/([cde])/(.*)/(.*)', 'single',
+    '/([cd])/(.*)/(.*)', 'single',
     '/([cd])/([^\/]*)', 'json',
     '/(.*)', 'blank'
 )
@@ -35,9 +35,11 @@ class single:
             return er('invalid format')
         format_enum = defs.Formats[format]
 
+        if not url_code in code_dict.keys():
+            return er('invalid url code')
         lookup_enum = code_dict[url_code]
-        mh = catdb.get_single_hash(lookup_enum,search_term,format_enum)
 
+        mh = catdb.get_single_hash(lookup_enum,search_term,format_enum)
         if mh:
             return base58.b58encode(mh[0])
         else:
@@ -46,8 +48,10 @@ class single:
 class json:
     def GET(self,url_code,search_term):
         lookup_enum = code_dict[url_code]
-        catdb.get_multiple_hash(lookup_enum,search_term)
-        return er('json wip')
+        mh_list = catdb.get_multiple_hash(lookup_enum,search_term)
+        mh_dict = {defs.Formats(x[1]).name:base58.b58encode(x[0]) for x in mh_list}
+        js = _json.dumps(mh_dict)
+        return js
 
 if __name__ == "__main__":
     catdb.init_db()

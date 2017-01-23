@@ -39,7 +39,6 @@ def get_multiple_hash(lookup_enum, search_term):
         cur.execute('SELECT MultiHash,FormatEnum FROM Library WHERE '+column+'=?', (search_term,))
         mh = cur.fetchall()
         
-        print(mh)
         return mh
 
 def get_hash_webpy(search_term, format, is_discogs):
