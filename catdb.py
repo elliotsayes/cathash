@@ -17,19 +17,29 @@ def init_db():
         return True
     return False
 
-def get_hash(search_term, f_enum, is_discogs):
-    if is_discogs:
-        column = 'DiscogsRelease'
-    else:
-        column = 'CatalogNumber'
+col_dict = {defs.Lookups.catalog:'CatalogNumber', defs.Lookups.discogs:'DiscogsRelease'}
+
+def get_single_hash(lookup_enum, search_term, format_enum):
+    column = col_dict[lookup_enum]
 
     con = sqlite3.connect(db_name)
     with con:
         cur = con.cursor()
-
-        cur.execute('SELECT MultiHash FROM Library WHERE '+column+'=? AND FormatEnum=?', (search_term,f_enum))
-
+        cur.execute('SELECT MultiHash FROM Library WHERE '+column+'=? AND FormatEnum=?', (search_term, format_enum.value))
         mh = cur.fetchone()
+
+        return mh
+
+def get_multiple_hash(lookup_enum, search_term):
+    column = col_dict[lookup_enum]
+
+    con = sqlite3.connect(db_name)
+    with con:
+        cur = con.cursor()
+        cur.execute('SELECT MultiHash,FormatEnum FROM Library WHERE '+column+'=?', (search_term,))
+        mh = cur.fetchall()
+        
+        print(mh)
         return mh
 
 def get_hash_webpy(search_term, format, is_discogs):

@@ -11,7 +11,7 @@ import defs
 
 urls = (
     '/', 'index',
-    '/([cd])/(.*)/(.*)', 'single',
+    '/([cde])/(.*)/(.*)', 'single',
     '/([cd])/([^\/]*)', 'json',
     '/(.*)', 'blank'
 )
@@ -27,18 +27,16 @@ class blank:
     def GET(self,name):
         return er('this page is intentionally left blank')
 
-class single:
-    def GET(self,lookup_type,search_term,format):
-        print('s\n'+lookup_type+'\n'+search_term+'\n'+format)
+code_dict = {'c':defs.Lookups.catalog, 'd':defs.Lookups.discogs}
 
+class single:
+    def GET(self,url_code,search_term,format):
         if not format in [f.name for f in defs.Formats]:
             return er('invalid format')
-        f_enum = defs.Formats[format].value
+        format_enum = defs.Formats[format]
 
-        if lookup_type is 'd':
-            mh = catdb.get_hash(search_term,f_enum,True)
-        elif lookup_type is 'c':
-            mh = catdb.get_hash(search_term,f_enum,False)
+        lookup_enum = code_dict[url_code]
+        mh = catdb.get_single_hash(lookup_enum,search_term,format_enum)
 
         if mh:
             return base58.b58encode(mh[0])
@@ -46,7 +44,9 @@ class single:
             return er('couldn\'t find db entry')
 
 class json:
-    def GET(self,lookup_type,search_term):
+    def GET(self,url_code,search_term):
+        lookup_enum = code_dict[url_code]
+        catdb.get_multiple_hash(lookup_enum,search_term)
         return er('json wip')
 
 if __name__ == "__main__":
