@@ -30,18 +30,20 @@ class blank:
 class single:
     def GET(self,lookup_type,search_term,format):
         print('s\n'+lookup_type+'\n'+search_term+'\n'+format)
+
         if not format in [f.name for f in defs.Formats]:
             return er('invalid format')
+        f_enum = defs.Formats[format].value
 
         if lookup_type is 'd':
-            mh = catdb.get_hash(search_term,format,True)
+            mh = catdb.get_hash(search_term,f_enum,True)
         elif lookup_type is 'c':
-            mh = catdb.get_hash(search_term,format,False)
+            mh = catdb.get_hash(search_term,f_enum,False)
 
         if mh:
             return base58.b58encode(mh[0])
         else:
-            return er('couldn\'t find hash')
+            return er('couldn\'t find db entry')
 
 class json:
     def GET(self,lookup_type,search_term):

@@ -2,7 +2,6 @@
 
 import sqlite3
 import os.path
-
 import defs
 
 db_name = 'cat.sqlite'
@@ -18,7 +17,7 @@ def init_db():
         return True
     return False
 
-def get_hash(search_term, format, is_discogs):
+def get_hash(search_term, f_enum, is_discogs):
     if is_discogs:
         column = 'DiscogsRelease'
     else:
@@ -28,10 +27,22 @@ def get_hash(search_term, format, is_discogs):
     with con:
         cur = con.cursor()
 
-        cur.execute('SELECT MultiHash FROM Library WHERE '+column+'=? AND FormatEnum=?', (search_term,defs.Formats[format].value))
+        cur.execute('SELECT MultiHash FROM Library WHERE '+column+'=? AND FormatEnum=?', (search_term,f_enum))
 
         mh = cur.fetchone()
         return mh
+
+def get_hash_webpy(search_term, format, is_discogs):
+    if is_discogs:
+        column = 'DiscogsRelease'
+    else:
+        column = 'CatalogNumber'
+
+    myvar = dict(s=search_term,f=format)
+
+    db = web.database(dbn='sqlite', db=db_name)
+    result = db.select('Library', myvar, what='MultiHash', where=column+'=$s AND FormatEnum=$f')
+
 
 def add_entry(mh,discogs,catno,format):
     con = sqlite3.connect(db_name)
