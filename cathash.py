@@ -36,10 +36,6 @@ class raw:
             return er('invalid format')
         format_enum = defs.Formats[format]
 
-        if not url_code in code_dict.keys():
-            return er('invalid url code')
-        lookup_enum = code_dict[url_code]
-
         mh = catdb.get_single_hash(lookup_enum,search_term,format_enum)
         if mh:
             return base58.b58encode(mh[0])
