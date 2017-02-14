@@ -35,6 +35,7 @@ class raw:
         if not format in [f.name for f in defs.Formats]:
             return er('invalid format')
         format_enum = defs.Formats[format]
+        lookup_enum = code_dict[url_code]
 
         mh = catdb.get_single_hash(lookup_enum,search_term,format_enum)
         if mh:
@@ -49,7 +50,7 @@ class json_dump:
         mh_dict = {defs.Formats(x[1]).name : base58.b58encode(x[0]) for x in mh_list}
 
         if mh_dict:
-            return json.dumps(mh_dict)
+            return json.dumps(mh_dict,separators=(',', ':'))
         else:
             return er('no hash for that code')
 
